@@ -9,16 +9,22 @@ export class ArgosThermometer extends TemperatureDevice {
   public static DEVICE_NAME = 'ARGOS';
 
   // Should Argos be a seperate preperationDevice, so we can track all these?
-  // - setpoint would be handy to set on the shot as it doesn't change 
+  // - setpoint would be handy to set on the shot as it doesn't change
   // - group head & boiler could be tracked in graphs
-  // - how would these line up to Visualizer fields of target temp goal, temp basket, temp mix etc 
-  private static TEMPERATURE_SERVICE_UUID ='6a521c59-55b5-4384-85c0-6534e63fb09e';
-  private static TEMPERATURE_SETPOINT_CHAR_UUID = '6a521c60-55b5-4384-85c0-6534e63fb09e';
-  private static TEMPERATURE_GROUPHEAD_CHAR_UUID = '6a521c62-55b5-4384-85c0-6534e63fb09e';
-  private static TEMPERATURE_BOILER_CURRENT_CHAR_UUID = '6a521c61-55b5-4384-85c0-6534e63fb09e';
-  private static TEMPERATURE_BOILER_TARGET_CHAR_UUID = '6a521c66-55b5-4384-85c0-6534e63fb09e';
+  // - how would these line up to Visualizer fields of target temp goal, temp basket, temp mix etc
+  private static TEMPERATURE_SERVICE_UUID =
+    '6a521c59-55b5-4384-85c0-6534e63fb09e';
+  private static TEMPERATURE_SETPOINT_CHAR_UUID =
+    '6a521c60-55b5-4384-85c0-6534e63fb09e';
+  private static TEMPERATURE_GROUPHEAD_CHAR_UUID =
+    '6a521c62-55b5-4384-85c0-6534e63fb09e';
+  private static TEMPERATURE_BOILER_CURRENT_CHAR_UUID =
+    '6a521c61-55b5-4384-85c0-6534e63fb09e';
+  private static TEMPERATURE_BOILER_TARGET_CHAR_UUID =
+    '6a521c66-55b5-4384-85c0-6534e63fb09e';
 
   private logger: Logger;
+  private lastGHTemp: number;
 
   constructor(data: PeripheralData) {
     super(data);
@@ -48,29 +54,45 @@ export class ArgosThermometer extends TemperatureDevice {
     ble.startNotification(
       this.device_id,
       ArgosThermometer.TEMPERATURE_SERVICE_UUID,
-      ArgosThermometer.TEMPERATURE_SETPOINT_CHAR_UUID,
+      ArgosThermometer.TEMPERATURE_BOILER_CURRENT_CHAR_UUID,
 
-      async (_data: any) => {;
-        this.parseStatusUpdate(_data);
+      async (_data: any) => {
+        this.parseStatusUpdate(_data, 'boiler');
       },
 
-      (_data: any) => {}
+      (_data: any) => {},
+    );
+    ble.startNotification(
+      this.device_id,
+      ArgosThermometer.TEMPERATURE_SERVICE_UUID,
+      ArgosThermometer.TEMPERATURE_GROUPHEAD_CHAR_UUID,
+
+      async (_data: any) => {
+        this.parseStatusUpdate(_data, 'group');
+      },
+
+      (_data: any) => {},
     );
   }
 
-  private parseStatusUpdate(temperatureRawStatus: ArrayBuffer) {
+  private parseStatusUpdate(temperatureRawStatus: ArrayBuffer, type: string) {
     const temperatureDataview = new DataView(temperatureRawStatus);
     const temperature = temperatureDataview.getFloat64(0, true);
-    
-    this.logger.log(
-      'temperatureRawStatus received is: ' + temperatureDataview
-    );
+
+    if (type == 'group') {
+      this.lastGHTemp = temperature;
+      return;
+    }
+
+    this.logger.log('temperatureRawStatus received is: ' + temperatureDataview);
+
+    const groupAsDecimal = Math.round(this.lastGHTemp) / 100;
 
     const formatNumber = new Intl.NumberFormat(undefined, {
       minimumIntegerDigits: 2,
     }).format;
 
-    const data = formatNumber(temperature);
+    const data = formatNumber(Math.round(temperature) + groupAsDecimal);
 
     this.setTemperature(Number(data), temperatureRawStatus);
   }
@@ -79,9 +101,16 @@ export class ArgosThermometer extends TemperatureDevice {
     ble.stopNotification(
       this.device_id,
       ArgosThermometer.TEMPERATURE_SERVICE_UUID,
-      ArgosThermometer.TEMPERATURE_SETPOINT_CHAR_UUID,
+      ArgosThermometer.TEMPERATURE_BOILER_CURRENT_CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
+    );
+    ble.stopNotification(
+      this.device_id,
+      ArgosThermometer.TEMPERATURE_SERVICE_UUID,
+      ArgosThermometer.TEMPERATURE_GROUPHEAD_CHAR_UUID,
+      (e: any) => {},
+      (e: any) => {},
     );
   }
 }
