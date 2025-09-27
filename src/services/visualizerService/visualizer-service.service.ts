@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { CapacitorHttp } from '@capacitor/core';
 import { UIFileHelper } from '../uiFileHelper';
+import {
+  IVisualizerMap,
+  IVisualizerProvider,
+} from '../../interfaces/visualizer/iVisualizerMap';
 import { Visualizer } from '../../classes/visualizer/visualizer';
+import { DecentVisualizer } from '../../classes/visualizer/decent/decentVisualizer';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { UIToast } from '../uiToast';
@@ -95,6 +100,11 @@ export class VisualizerService {
     }
   }
 
+  private makeVisualizer(settings: Settings): IVisualizerMap {
+    // TODO: Read from settings
+    return new DecentVisualizer();
+  }
+
   public async uploadToVisualizer(
     _brew: Brew,
     _showToast: boolean = true,
@@ -104,26 +114,21 @@ export class VisualizerService {
     }
 
     const settings: Settings = this.uiSettingsStorage.getSettings();
-    const vS: Visualizer = new Visualizer();
+    const vS: IVisualizerMap = this.makeVisualizer(settings);
     try {
       vS.mapBrew(_brew);
-      try {
-        if (_brew.tds > 0) {
-          vS.brew.ey = Number(_brew.getExtractionYield());
-        }
-      } catch (ex) {}
-
       vS.mapBean(_brew.getBean());
       vS.mapWater(_brew.getWater());
       vS.mapPreparation(_brew.getPreparation());
       vS.mapMill(_brew.getMill());
-      vS.brewFlow = await this.readFlowProfile(_brew);
+      const brewFlow: BrewFlow = await this.readFlowProfile(_brew);
+      vS.mapBrewFlow(brewFlow);
       // Put the actual visualizer id into the request if we stored one
       if (_brew.customInformation && _brew.customInformation.visualizer_id) {
-        vS.visualizerId = _brew.customInformation.visualizer_id;
+        vS.setVisualizerId(_brew.customInformation.visualizer_id);
       }
     } catch (ex) {}
-    if (vS.brewFlow === null || vS.brewFlow === undefined) {
+    if (!vS.hasFlowData()) {
       const errorMessage =
         'Cannot upload visualizer shot because the data does not contain any brewflow';
       this.uiLog.error(errorMessage);

@@ -1203,7 +1203,13 @@
                 </div>
               </ion-checkbox>
             </ion-item>
-
+            <ion-item>
+              <ion-radio-group label-placement='start' (ionBlur)="toggleLog();" [(ngModel)]="settings.temperature_graph_source">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"TEMPERATURE.LOG" | translate}}</h2>
+                </div>
+              </ion-radio-group>
+            </ion-item>
           </ion-list>
 
           <ion-label>

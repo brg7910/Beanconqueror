@@ -10,8 +10,9 @@ import { Mill } from '../mill/mill';
 import { Preparation } from '../preparation/preparation';
 import { Water } from '../water/water';
 import { BrewFlow } from '../brew/brewFlow';
+import { IVisualizerMap } from 'src/interfaces/visualizer/iVisualizerMap';
 
-export class Visualizer implements IVisualizer {
+export class Visualizer implements IVisualizer, IVisualizerMap {
   public bean: BeanVisualizer;
   public brew: BrewVisualizer;
   public mill: MillVisualizer;
@@ -42,6 +43,11 @@ export class Visualizer implements IVisualizer {
         // This should be the EY key ;)
       }
     });
+    try {
+      if (brew.tds > 0) {
+        this.brew.ey = Number(brew.getExtractionYield());
+      }
+    } catch (ex) {}
   }
   public mapBean(bean: Bean) {
     Object.keys(this.bean).map((_key) => {
@@ -62,5 +68,16 @@ export class Visualizer implements IVisualizer {
     Object.keys(this.water).map((_key) => {
       this.water[_key] = water[_key];
     });
+  }
+  public mapBrewFlow(brewFlow: BrewFlow) {
+    this.brewFlow = brewFlow;
+  }
+
+  public setVisualizerId(id: string): void {
+    this.visualizerId = id;
+  }
+
+  public hasFlowData(): boolean {
+    return !(this.brewFlow === null || this.brewFlow === undefined);
   }
 }

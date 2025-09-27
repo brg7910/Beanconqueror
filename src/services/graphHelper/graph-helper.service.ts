@@ -27,6 +27,7 @@ export class GraphHelperService {
     trace.realtimeFlowTrace = undefined;
     trace.pressureTrace = undefined;
     trace.temperatureTrace = undefined;
+    trace.temperatureSecondaryTraces = undefined
     trace.weightTraceSecond = undefined;
     trace.realtimeFlowTraceSecond = undefined;
     return trace;
@@ -106,7 +107,6 @@ export class GraphHelperService {
       hoverinfo: _isDetail ? 'all' : 'skip',
       showlegend: false,
     };
-
     traces.temperatureTrace = {
       x: [],
       y: [],
@@ -123,6 +123,7 @@ export class GraphHelperService {
       hoverinfo: _isDetail ? 'all' : 'skip',
       showlegend: false,
     };
+
     traces.weightTraceSecond = {
       x: [],
       y: [],
