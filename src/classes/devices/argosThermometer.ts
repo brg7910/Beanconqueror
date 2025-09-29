@@ -106,13 +106,13 @@ export class ArgosThermometer extends TemperatureDevice {
     // set temperature on the correct source
     switch (characteristic) {
       case ArgosThermometer.TEMPERATURE_SETPOINT_CHAR_UUID:
-        this.setTemperature(data, TemperatureSource.SET_POINT);
+        this.setTemperature(data, temperatureDataview, TemperatureSource.SET_POINT);
         break;
       case ArgosThermometer.TEMPERATURE_BOILER_CURRENT_CHAR_UUID:
-        this.setTemperature(data, TemperatureSource.WATER_PROBE);
+        this.setTemperature(data, temperatureDataview, TemperatureSource.WATER_PROBE);
         break;
       case ArgosThermometer.TEMPERATURE_GROUPHEAD_CHAR_UUID:
-        this.setTemperature(data, TemperatureSource.GROUP_PROBE);
+        this.setTemperature(data, temperatureDataview, TemperatureSource.GROUP_PROBE);
         break;
     }
   }

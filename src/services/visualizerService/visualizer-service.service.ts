@@ -3,9 +3,7 @@ import { CapacitorHttp } from '@capacitor/core';
 import { UIFileHelper } from '../uiFileHelper';
 import {
   IVisualizerMap,
-  IVisualizerProvider,
 } from '../../interfaces/visualizer/iVisualizerMap';
-import { Visualizer } from '../../classes/visualizer/visualizer';
 import { DecentVisualizer } from '../../classes/visualizer/decent/decentVisualizer';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
@@ -127,7 +125,9 @@ export class VisualizerService {
       if (_brew.customInformation && _brew.customInformation.visualizer_id) {
         vS.setVisualizerId(_brew.customInformation.visualizer_id);
       }
-    } catch (ex) {}
+    } catch (ex) {
+      this.uiLog.error(ex);
+    }
     if (!vS.hasFlowData()) {
       const errorMessage =
         'Cannot upload visualizer shot because the data does not contain any brewflow';

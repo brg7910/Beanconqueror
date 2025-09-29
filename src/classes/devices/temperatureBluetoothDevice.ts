@@ -73,6 +73,7 @@ export abstract class TemperatureDevice {
       actual: 0,
       old: 0,
       source: _source,
+      lastSetTime: 0,
     });
   }
 
@@ -105,10 +106,11 @@ export abstract class TemperatureDevice {
     _rawData: any,
     _source: TemperatureSource = this.defaultTemperatureSource,
   ) {
-    if (Date.now() - this.lastTemperatureSetTime < UPDATE_EVERY_MS) {
+    const temperatureData = this.dataFor(_source);
+    if (Date.now() - temperatureData.lastSetTime < UPDATE_EVERY_MS) {
       return;
     }
-    this.lastTemperatureSetTime = Date.now();
+    temperatureData.lastSetTime = Date.now();
 
     this.temperatureParentLogger.log(
       'Bluetooth Temperature Device - New temperature recieved ' +
@@ -118,8 +120,7 @@ export abstract class TemperatureDevice {
         ' - raw data ' +
         JSON.stringify(_rawData),
     );
-
-    const temperatureData = this.dataFor(_source);
+  
     temperatureData.actual = _newTemperature;
     const actualDate = new Date();
     try {

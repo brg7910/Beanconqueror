@@ -3310,7 +3310,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       temperatureObj.flowTimeSecond,
       temperatureObj.actual,
       temperatureObj.old,
-      _temperature.type,
+      _temperature.source,
     );
 
     if (_temperature.source == this.settings.temperature_graph_source) {
@@ -4063,10 +4063,10 @@ export class BrewBrewingGraphComponent implements OnInit {
       case TemperatureSource.SET_POINT:
         this.flow_profile_raw.targetTemperatureFlow.push(temperatureFlow);
         break;
-      case TemperatureSource.WATER_PROBE:
+      case TemperatureSource.GROUP_PROBE:
         this.flow_profile_raw.groupTemperatureFlow.push(temperatureFlow);
         break;
-      case TemperatureSource.GROUP_PROBE:
+      case TemperatureSource.WATER_PROBE:
         this.flow_profile_raw.temperatureFlow.push(temperatureFlow);
         break;
     }

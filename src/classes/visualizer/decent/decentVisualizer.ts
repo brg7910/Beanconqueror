@@ -26,8 +26,8 @@ export interface TemperatureBlock {
 }
 
 export interface TotalsBlock {
-  weight?: number;
-  water_dispensed?: number;
+  weight?: number[];
+  water_dispensed?: number[];
 }
 
 export interface Profile {
@@ -89,8 +89,8 @@ export class DecentVisualizer implements IVisualizerMap {
     };
 
     this.totals = {
-      weight: 0,
-      water_dispensed: 0,
+      weight: [],
+      water_dispensed: [],
     };
 
     this.state_change = []; // unknown shape; default to empty list
@@ -124,7 +124,7 @@ export class DecentVisualizer implements IVisualizerMap {
   }
   public mapMill(mill: Mill) {
     // settings
-    this.app.data.settings['grinder_setting'] = mill.name;
+    this.app.data.settings['grinder_model'] = mill.name;
   }
 
   public mapPreparation(preparation: Preparation) {
@@ -154,18 +154,19 @@ export class DecentVisualizer implements IVisualizerMap {
     this.elapsed = decentBrewFlow.getElapsed().slice();
 
     // temperature flows
-    this.temperature.mix = decentFlowData['espresso_temperature_mix'].slice();
-    this.temperature.goal = decentFlowData['espresso_temperature_goal'].slice();
-    this.temperature.basket =
-      decentFlowData['espresso_temperature_basket'].slice();
+    this.temperature.mix = decentFlowData['espresso_temperature_mix']?.slice() ?? [];
+    this.temperature.goal = decentFlowData['espresso_temperature_goal']?.slice() ?? [];
+    this.temperature.basket = decentFlowData['espresso_temperature_basket']?.slice() ?? [];
 
     // pressure flow
-    this.pressure.pressure = decentFlowData['espresso_pressure'].slice();
-
+    this.pressure.pressure = decentFlowData['espresso_pressure']?.slice() ?? [];
+    
+    // total weight
+    this.totals.weight = decentFlowData['espresso_weight']?.slice() ?? [];
+    
     // weight flows
-    this.flow.flow = decentFlowData['espresso_flow'].slice();
-    this.flow.by_weight = decentFlowData['espresso_weight'].slice();
-    this.flow.by_weight_raw = decentFlowData['espresso_flow_weight'].slice();
+    this.flow.flow = decentFlowData['espresso_flow']?.slice() ?? [];
+    this.flow.by_weight = decentFlowData['espresso_flow_weight']?.slice() ?? [];
   }
 
   public setVisualizerId(string: any): void {
