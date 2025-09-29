@@ -3322,9 +3322,10 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.updateChart();
         this.flowSecondTick++;
       }
+      this.setActualTemperatureInformation(temperatureObj.actual);
     }
 
-    this.setActualTemperatureInformation(temperatureObj.actual);
+   
   }
 
   private __setFlowProfile(_scaleChange: any) {
