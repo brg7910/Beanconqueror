@@ -229,6 +229,7 @@ export class Settings implements ISettings {
   public temperature_stay_connected: boolean;
   public temperature_supported_sources: [TemperatureSource];
   public temperature_graph_source: TemperatureSource;
+  public temperature_show_before_timer: boolean;
 
   public refractometer_id: string;
   public refractometer_type: RefractometerType;
@@ -567,6 +568,7 @@ export class Settings implements ISettings {
     this.temperature_threshold_temp = 92;
     this.temperature_stay_connected = false;
     this.temperature_graph_source = TemperatureSource.WATER_PROBE;
+    this.temperature_show_before_timer = true;
 
     this.refractometer_id = '';
     this.refractometer_type = null;

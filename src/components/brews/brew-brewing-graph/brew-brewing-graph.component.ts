@@ -870,7 +870,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         _firstStart === false
       ) {
         this.attachToTemperatureChange();
-      } else if (this.settings.temperature_threshold_active) {
+      } else if (this.settings.temperature_threshold_active === true || this.settings.temperature_show_before_timer === true) {
         this.attachToTemperatureChange();
       }
 
@@ -1381,7 +1381,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       if (temperatureDevice) {
         this.deattachToTemperatureChange();
-        if (this.settings.temperature_threshold_active === true) {
+        if (this.settings.temperature_threshold_active === true || this.settings.temperature_show_before_timer === true ) {
           // After attaching attach again
           this.attachToTemperatureChange();
         }
@@ -2105,7 +2105,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
       if (
         temperatureDevice &&
-        (this.settings.temperature_threshold_active === false ||
+        ((this.settings.temperature_threshold_active === false && this.settings.temperature_show_before_timer === false) ||
           _event !== 'AUTO_START_TEMPERATURE')
       ) {
         this.attachToTemperatureChange();
@@ -2585,6 +2585,9 @@ export class BrewBrewingGraphComponent implements OnInit {
                   this.checkChanges();
                 });
               });
+            } else if(_val.source == this.settings.temperature_graph_source) {
+              // if timer isn't running yet, we can still update temperature information 
+              this.setActualTemperatureInformation(_val.actual);
             }
           }
         });
