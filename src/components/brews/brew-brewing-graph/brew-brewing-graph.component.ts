@@ -1017,7 +1017,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
   public setActualTemperatureInformation(_temperature) {
     this.ngZone.runOutsideAngular(() => {
-      if (this.brewComponent.maximizeFlowGraphIsShown === true) {
+       if (this.brewComponent.maximizeFlowGraphIsShown === true) {
         this.brewComponent.brewTemperatureGraphSubject.next({
           temperature: _temperature,
         });
@@ -1025,8 +1025,8 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       try {
         const temperatureEl = this.temperatureEl.nativeElement;
-
-        temperatureEl.textContent = _temperature;
+        const temperatureFormatted = _temperature.toFixed(2);
+        temperatureEl.textContent = temperatureFormatted;
       } catch (ex) {}
     });
   }
