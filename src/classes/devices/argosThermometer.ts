@@ -27,11 +27,19 @@ export class ArgosThermometer extends TemperatureDevice {
     '6a521c66-55b5-4384-85c0-6534e63fb09e';
 
   private logger: Logger;
+  private state: { 
+    setPoint: number; 
+    boilerTarget: number
+  };
 
   constructor(data: PeripheralData) {
     super(data, TemperatureSource.SET_POINT);
     this.connect();
     this.logger = new Logger('ArgosTemperatureSensor');
+    this.state = {
+      setPoint: 0,
+      boilerTarget: 0,
+    }
   }
 
   public static test(device: any): boolean {
@@ -56,7 +64,7 @@ export class ArgosThermometer extends TemperatureDevice {
     return [
       TemperatureSource.WATER_PROBE,
       TemperatureSource.SET_POINT,
-      TemperatureSource.GROUP_PROBE,
+      TemperatureSource.BASKET_PROBE,
     ];
   }
 
@@ -68,7 +76,7 @@ export class ArgosThermometer extends TemperatureDevice {
       ArgosThermometer.TEMPERATURE_BOILER_CURRENT_CHAR_UUID,
     );
     this.attachArgosNotification(
-      ArgosThermometer.TEMPERATURE_GROUPHEAD_CHAR_UUID,
+      ArgosThermometer.TEMPERATURE_BOILER_TARGET_CHAR_UUID,
     );
   }
 
@@ -84,6 +92,10 @@ export class ArgosThermometer extends TemperatureDevice {
 
       (_data: any) => {},
     );
+  }
+
+  public getDefaultTempeatureSource() {
+    return TemperatureSource.BASKET_PROBE;
   }
 
   private parseStatusUpdate(
@@ -106,14 +118,22 @@ export class ArgosThermometer extends TemperatureDevice {
     // set temperature on the correct source
     switch (characteristic) {
       case ArgosThermometer.TEMPERATURE_SETPOINT_CHAR_UUID:
-        this.setTemperature(data, temperatureDataview, TemperatureSource.SET_POINT);
+      this.state.setPoint = data;  
+      this.setTemperature(data, temperatureDataview, TemperatureSource.SET_POINT);
         break;
       case ArgosThermometer.TEMPERATURE_BOILER_CURRENT_CHAR_UUID:
+        if(this.state.setPoint !=0 && this.state.boilerTarget != 0){
+          // calculate boiler error and approx water temp
+          const boilerError = data - this.state.boilerTarget;
+          const approxWaterTemp = this.state.setPoint + (0.75 * boilerError);
+          this.setTemperature(Number(formatNumber(approxWaterTemp)), temperatureDataview, TemperatureSource.BASKET_PROBE);  
+        }
+        // send raw boiler temp 
         this.setTemperature(data, temperatureDataview, TemperatureSource.WATER_PROBE);
         break;
-      case ArgosThermometer.TEMPERATURE_GROUPHEAD_CHAR_UUID:
-        this.setTemperature(data, temperatureDataview, TemperatureSource.GROUP_PROBE);
-        break;
+      case ArgosThermometer.TEMPERATURE_BOILER_TARGET_CHAR_UUID:
+          this.state.boilerTarget = data;
+          break;
     }
   }
 
@@ -125,7 +145,7 @@ export class ArgosThermometer extends TemperatureDevice {
       ArgosThermometer.TEMPERATURE_BOILER_CURRENT_CHAR_UUID,
     );
     this.detachArgosNotification(
-      ArgosThermometer.TEMPERATURE_GROUPHEAD_CHAR_UUID,
+      ArgosThermometer.TEMPERATURE_BOILER_TARGET_CHAR_UUID,
     );
   }
 

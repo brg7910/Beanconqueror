@@ -568,7 +568,7 @@ export class Settings implements ISettings {
     this.temperature_threshold_temp = 92;
     this.temperature_stay_connected = false;
     this.temperature_graph_source = TemperatureSource.WATER_PROBE;
-    this.temperature_show_before_timer = true;
+    this.temperature_show_before_timer = false;
 
     this.refractometer_id = '';
     this.refractometer_type = null;

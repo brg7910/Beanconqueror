@@ -18,7 +18,7 @@ const DATA_LABELS_MAP: Record<string, string> = {
   realtimeFlow: 'espresso_flow_weight',
   pressureFlow: 'espresso_pressure',
   temperatureFlow: 'espresso_temperature_mix',
-  groupTemperatureFlow: 'espresso_temperature_basket',
+  basketTemperatureFlow: 'espresso_temperature_basket',
   targetTemperatureFlow: 'espresso_temperature_goal',
 };
 
@@ -28,7 +28,7 @@ const DATA_VALUES_MAP: Record<string, string> = {
   realtimeFlow: 'flow_value',
   pressureFlow: 'actual_pressure',
   temperatureFlow: 'actual_temperature',
-  groupTemperatureFlow: 'actual_temperature',
+  basketTemperatureFlow: 'actual_temperature',
   targetTemperatureFlow: 'actual_temperature',
 };
 

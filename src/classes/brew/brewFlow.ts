@@ -6,7 +6,7 @@ export class BrewFlow {
   public realtimeFlowSecond: Array<IBrewRealtimeWaterFlow>;
   public pressureFlow: Array<IBrewPressureFlow>;
   public temperatureFlow: Array<IBrewTemperatureFlow>;
-  public groupTemperatureFlow: Array<IBrewTemperatureFlow>;
+  public basketTemperatureFlow: Array<IBrewTemperatureFlow>;
   public targetTemperatureFlow: Array<IBrewTemperatureFlow>;
   public brewbyweight: Array<IBrewByWeight>;
 
@@ -18,7 +18,7 @@ export class BrewFlow {
     this.realtimeFlowSecond = [];
     this.pressureFlow = [];
     this.temperatureFlow = [];
-    this.groupTemperatureFlow = [];
+    this.basketTemperatureFlow = [];
     this.targetTemperatureFlow = [];
     this.brewbyweight = [];
   }

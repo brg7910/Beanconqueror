@@ -8,7 +8,7 @@ declare var ble: any;
 export enum TemperatureSource {
   SET_POINT = 'SetPoint', // set point or goal for the shot
   WATER_PROBE = 'WaterProbe', // last measured water temp before group (mix)
-  GROUP_PROBE = 'GroupProbe', // measured temp at group/basket, may or may not be in water path
+  BASKET_PROBE = 'BasketProbe', // measured temp at group/basket, may or may not be in water path
 }
 
 export interface Temperature {
@@ -51,6 +51,10 @@ export abstract class TemperatureDevice {
 
   public abstract connect(): void;
   public abstract disconnect(): void;
+
+  public getDefaultTempeatureSource() {
+    return TemperatureSource.WATER_PROBE;
+  }
 
   public getTemperature(
     _source: TemperatureSource = this.defaultTemperatureSource,

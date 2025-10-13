@@ -4067,8 +4067,8 @@ export class BrewBrewingGraphComponent implements OnInit {
       case TemperatureSource.SET_POINT:
         this.flow_profile_raw.targetTemperatureFlow.push(temperatureFlow);
         break;
-      case TemperatureSource.GROUP_PROBE:
-        this.flow_profile_raw.groupTemperatureFlow.push(temperatureFlow);
+      case TemperatureSource.BASKET_PROBE:
+        this.flow_profile_raw.basketTemperatureFlow.push(temperatureFlow);
         break;
       case TemperatureSource.WATER_PROBE:
         this.flow_profile_raw.temperatureFlow.push(temperatureFlow);
